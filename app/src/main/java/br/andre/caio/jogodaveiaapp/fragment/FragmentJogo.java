@@ -3,10 +3,15 @@ package br.andre.caio.jogodaveiaapp.fragment;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -17,6 +22,7 @@ import java.util.Random;
 
 import br.andre.caio.jogodaveiaapp.R;
 import br.andre.caio.jogodaveiaapp.databinding.FragmentJogoBinding;
+import br.andre.caio.jogodaveiaapp.util.PrefsUtil;
 
 public class FragmentJogo extends Fragment {
     //variável para acessar os elementos na view
@@ -31,6 +37,10 @@ public class FragmentJogo extends Fragment {
     private Random random;
     //variável para contar o número de jogadas
     private int numJogadas = 0;
+    //variaveis para placar
+    private int placarJog1 = 0, placarJog2 = 0;
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,6 +50,7 @@ public class FragmentJogo extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
 
         binding = FragmentJogoBinding.inflate(inflater, container, false);
 
@@ -71,11 +82,17 @@ public class FragmentJogo extends Fragment {
         random = new Random();
 
         //define s simbolos dos jogadores
-        simbJog1 = "X";
+        simbJog1 = PrefsUtil.getSimboloJog1(getContext());
 
-        simbJog2 = "O";
+        simbJog2 = PrefsUtil.getSimboloJog2(getContext());
+
+        //altera o simbolo do Jogador
+        binding.textView.setText(getResources().getString(R.string.jogador1, simbJog1));
+        binding.textView2.setText(getResources().getString(R.string.jogador2, simbJog2));
 
         sorteiar();
+
+        atualizaVez();
 
         return binding.getRoot();
     }
@@ -90,6 +107,11 @@ public class FragmentJogo extends Fragment {
         }
     }
     private void resetar(){
+
+        for (String[] vetor : tabuleiro) {
+            Arrays.fill(vetor, "");
+        }
+
         for(int i = 0; i < botoes.length; i++){
         botoes[i].setText("");
         botoes[i].setBackgroundColor(getResources().getColor(R.color.purple_500));
@@ -133,10 +155,38 @@ public class FragmentJogo extends Fragment {
         if (tabuleiro[0][2].equals(simbolo) && tabuleiro[1][1].equals(simbolo) && tabuleiro[2][0].equals(simbolo)) {
             return true;
         }
-
-
         return false;
 
+    }
+
+    private void atualizarPlacar(){
+        binding.editText1.setText(placarJog1 + "");
+        binding.editText2.setText(placarJog2 + "");
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+       //verifica qual botao foi clicado no menu
+        switch (item.getItemId()){
+            //caso tenha clicado no resetar
+            case R.id.menu_resetar:
+                placarJog1 = 0;
+                placarJog2 = 0;
+                resetar();
+                atualizarPlacar();
+                break;
+            case R.id.menu_prefs:
+                NavHostFragment.findNavController(FragmentJogo.this).navigate(R.id.action_fragmentJogo_to_prefFragment);
+                break;
+        }
+
+        return true;
     }
 
     private View.OnClickListener listenerBotoes = view -> {
@@ -161,16 +211,22 @@ public class FragmentJogo extends Fragment {
         if (numJogadas >= 5 && venceu()) {
             Toast.makeText(getContext(), R.string.venceu, Toast.LENGTH_SHORT).show();
             resetar();
+            //verifica quem venceu e atualiza o placar
+            if(simbolo.equals(simbJog1)){
+                placarJog1++;
+            }else{
+                placarJog2++;
+            }
+            atualizarPlacar();
         }else if(numJogadas == 9){
             Toast.makeText(getContext(), R.string.velha, Toast.LENGTH_SHORT).show();
             resetar();
         }else{
+            //inverter a vez
             simbolo = simbolo.equals(simbJog1) ? simbJog2 : simbJog1;
             atualizaVez();
         }
-        //inverter a vez
-        simbolo = simbolo.equals(simbJog1) ? simbJog2 : simbJog1;
-
         atualizaVez();
     };
+
 }

@@ -5,10 +5,41 @@
     android:layout_height="match_parent"
     tools:context=".fragment.FragmentInicio">
 
-    <!-- TODO: Update blank fragment layout -->
+=
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:text="Jogo da Velha"
+        android:textSize="30dp"
+        android:layout_marginTop = "50dp"
+        android:textColor="@color/purple_500"
+        android:textStyle="bold"
+        />
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/veia"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:text="Jogar"
+        android:textSize="25dp"
+        android:layout_marginTop = "550dp"
+        android:textColor="@color/purple_500"
+        android:textStyle="bold"/>
+
+    <ImageButton
+        android:id="@+id/buttonPlay"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/play"
+        android:layout_marginLeft="180dp"
+        android:layout_marginTop="600dp"
+        android:background="@color/white"
+        >
+
+    </ImageButton>
 
 </FrameLayout>

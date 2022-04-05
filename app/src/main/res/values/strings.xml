@@ -3,6 +3,11 @@
     <string name="action_settings">Settings</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="jogador1">Jogador 1 (%1$s)</string>
+    <string name="jogador2">Jogador 2 (%1$s)</string>
     <string name="venceu">Vou resumir com duas palavras: PARA - BÉNS</string>
     <string name="velha">Deu velha!!!</string>
+    <string name="resetar">Zerar o placar</string>
+    <string name="tela_inicial">Tela Inicial</string>
+    <string name="preferencia">Preferências</string>
 </resources>
