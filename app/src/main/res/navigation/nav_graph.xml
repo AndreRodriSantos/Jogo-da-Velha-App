@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/fragmentJogo">
+    app:startDestination="@id/fragmentInicio">
     <fragment
         android:id="@+id/fragmentInicio"
         android:name="br.andre.caio.jogodaveiaapp.fragment.FragmentInicio"

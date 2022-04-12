@@ -1,9 +1,12 @@
 package br.andre.caio.jogodaveiaapp.fragment;
 
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -20,6 +23,7 @@ import android.widget.Toast;
 import java.util.Arrays;
 import java.util.Random;
 
+import br.andre.caio.jogodaveiaapp.MainActivity;
 import br.andre.caio.jogodaveiaapp.R;
 import br.andre.caio.jogodaveiaapp.databinding.FragmentJogoBinding;
 import br.andre.caio.jogodaveiaapp.util.PrefsUtil;
@@ -38,9 +42,9 @@ public class FragmentJogo extends Fragment {
     //variável para contar o número de jogadas
     private int numJogadas = 0;
     //variaveis para placar
-    private int placarJog1 = 0, placarJog2 = 0;
-
-
+    private int placarJog1 = 0, placarJog2 = 0, placarVeia = 0;
+    //Alert dialog
+    private AlertDialog alerta;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,8 +54,31 @@ public class FragmentJogo extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
 
+        //Cria o gerador do AlertDialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.getContext());
+        //define o titulo
+        builder.setTitle("Tem Certeza?");
+        //define a mensagem
+        builder.setMessage("Tem certeza que deseja Resetar o Jogo?");
+        //define um botão como positivo
+        builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                placarJog1 = 0;
+                placarJog2 = 0;
+                placarVeia = 0;
+                resetar();
+                atualizarPlacar();
+            }
+        });
+        //define um botão como negativo.
+        builder.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+            }
+        });
+        alerta = builder.create();
+
+        setHasOptionsMenu(true);
         binding = FragmentJogoBinding.inflate(inflater, container, false);
 
         //instacia o vetor
@@ -91,13 +118,10 @@ public class FragmentJogo extends Fragment {
         binding.textView2.setText(getResources().getString(R.string.jogador2, simbJog2));
 
         sorteiar();
-
         atualizaVez();
 
         return binding.getRoot();
     }
-
-
     private void sorteiar() {
         //caso random gere um valor V, jogador 1 começa
         if (random.nextBoolean()) {
@@ -158,10 +182,10 @@ public class FragmentJogo extends Fragment {
         return false;
 
     }
-
     private void atualizarPlacar(){
         binding.editText1.setText(placarJog1 + "");
         binding.editText2.setText(placarJog2 + "");
+        binding.editText3.setText(placarVeia + "");
     }
 
     @Override
@@ -176,19 +200,17 @@ public class FragmentJogo extends Fragment {
         switch (item.getItemId()){
             //caso tenha clicado no resetar
             case R.id.menu_resetar:
-                placarJog1 = 0;
-                placarJog2 = 0;
-                resetar();
-                atualizarPlacar();
+                alerta.show();
                 break;
             case R.id.menu_prefs:
                 NavHostFragment.findNavController(FragmentJogo.this).navigate(R.id.action_fragmentJogo_to_prefFragment);
                 break;
+            case   R.id.menu_inicio:
+                NavHostFragment.findNavController(FragmentJogo.this).navigate(R.id.action_fragmentJogo_to_fragmentInicio);
+                break;
         }
-
         return true;
     }
-
     private View.OnClickListener listenerBotoes = view -> {
         numJogadas++;
         //pega o nome do botao
@@ -220,13 +242,23 @@ public class FragmentJogo extends Fragment {
             atualizarPlacar();
         }else if(numJogadas == 9){
             Toast.makeText(getContext(), R.string.velha, Toast.LENGTH_SHORT).show();
+            placarVeia++;
+            atualizarPlacar();
             resetar();
         }else{
             //inverter a vez
             simbolo = simbolo.equals(simbJog1) ? simbJog2 : simbJog1;
             atualizaVez();
         }
-        atualizaVez();
     };
 
+    public void onStart() {
+        super.onStart();
+        // para deletar a toolbar
+        //pegar uma referencia do tipo compat activity
+        AppCompatActivity minhaActivity = (AppCompatActivity) getActivity();
+        //oculta  a toolbar
+        minhaActivity.getSupportActionBar().show();
+        minhaActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+    }
 }
