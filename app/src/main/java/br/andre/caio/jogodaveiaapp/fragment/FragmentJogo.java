@@ -232,7 +232,7 @@ public class FragmentJogo extends Fragment {
 
         if (numJogadas >= 5 && venceu()) {
             Toast.makeText(getContext(), R.string.venceu, Toast.LENGTH_SHORT).show();
-            resetar();
+
             //verifica quem venceu e atualiza o placar
             if(simbolo.equals(simbJog1)){
                 placarJog1++;
@@ -240,6 +240,7 @@ public class FragmentJogo extends Fragment {
                 placarJog2++;
             }
             atualizarPlacar();
+            resetar();
         }else if(numJogadas == 9){
             Toast.makeText(getContext(), R.string.velha, Toast.LENGTH_SHORT).show();
             placarVeia++;
